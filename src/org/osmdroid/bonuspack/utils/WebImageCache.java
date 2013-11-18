@@ -1,6 +1,7 @@
 package org.osmdroid.bonuspack.utils;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 import android.graphics.Bitmap;
 import android.util.Log;
 
@@ -17,7 +18,7 @@ public class WebImageCache {
 		mCapacity = maxItems;
 		mCacheMap = new LinkedHashMap<String, Bitmap>(maxItems+1, 1.1f, true){
 			private static final long serialVersionUID = -4831331496601290979L;
-			protected boolean removeEldestEntry(Entry<String, Bitmap> eldest) {
+			protected boolean removeEldestEntry(Map.Entry<String, Bitmap> eldest) {
 				return size() > mCapacity;
 			}			
 		};
