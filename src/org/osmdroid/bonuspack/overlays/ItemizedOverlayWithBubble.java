@@ -1,7 +1,10 @@
 package org.osmdroid.bonuspack.overlays;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.osmdroid.bonuspack.utils.BonusPackHelper;
+import org.osmdroid.util.BoundingBoxE6;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.MapView.Projection;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
@@ -66,6 +69,17 @@ public class ItemizedOverlayWithBubble<Item extends OverlayItem> extends Itemize
 			eItem.showBubble(mBubble, mapView, panIntoView);
 			//setFocus((Item)eItem);
 		}
+	}
+	
+	public BoundingBoxE6 getBoundingBoxE6(){
+		ArrayList<GeoPoint> points = new ArrayList<GeoPoint>(mItemList.size());
+		for (Item item:mItemList){
+			points.add(item.getPoint());
+		}
+		BoundingBoxE6 bb = BoundingBoxE6.fromGeoPoints(points);
+		//Correcting osmdroid bug #359:
+		//bb = new BoundingBoxE6(bb.getLatSouthE6(), bb.getLonWestE6(), bb.getLatNorthE6(), bb.getLonEastE6());
+		return bb;
 	}
 	
 	/**
@@ -148,13 +162,13 @@ public class ItemizedOverlayWithBubble<Item extends OverlayItem> extends Itemize
 	        final Item item = getItem(i);
 			if (item != mItemWithBubble){
 		        pj.toMapPixels(item.getPoint(), mCurScreenCoords);
-		        onDrawItem(canvas.getSafeCanvas(), item, mCurScreenCoords);
+		        onDrawItem(canvas, item, mCurScreenCoords, mapView.getMapOrientation());
 			}
 		}
 		//draw focused item last:
 		if (mItemWithBubble != null){
 	        pj.toMapPixels(mItemWithBubble.getPoint(), mCurScreenCoords);
-	        onDrawItem(canvas.getSafeCanvas(), (Item)mItemWithBubble, mCurScreenCoords);
+	        onDrawItem(canvas, (Item)mItemWithBubble, mCurScreenCoords, mapView.getMapOrientation());
 		}
     }
 	
