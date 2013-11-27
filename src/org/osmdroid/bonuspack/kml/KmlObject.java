@@ -24,15 +24,31 @@ import android.os.Parcelable;
  * @author M.Kergall
  */
 public class KmlObject implements Parcelable {
-	public static final int NO_SHAPE=0, POINT=1, LINE_STRING=2, POLYGON=3, FOLDER=4; //KML geometry
+	/** possible KML object types. 
+	 * Document is handled as a Folder. 
+	 * Placemarks are the same object than their Geometry (a Placemark with a Polygon will just be a POLYGON). 
+	 * NO_SHAPE is reserved for issues/errors. */
+	public static final int NO_SHAPE=0, POINT=1, LINE_STRING=2, POLYGON=3, FOLDER=4;
 	
+	/** KML object type */
 	public int mObjectType;
+	/** object id attribute, if any. Null if none. */
 	public String mId;
-	public String mName, mDescription;
+	/** name tag */
+	public String mName;
+	/** description tag */
+	public String mDescription;
+	/** if this is a Folder or Document, list of KmlObject features it contains */
 	public ArrayList<KmlObject> mItems;
-	public boolean mVisibility=true, mOpen=true;
+	/** visibility tag */
+	public boolean mVisibility=true;
+	/** open tag */
+	public boolean mOpen=true;
+	/** coordinates of the geometry. If Point, just one entry. */
 	public ArrayList<GeoPoint> mCoordinates;
+	/** styleUrl, without the # */
 	public String mStyle;
+	/** bounding box */
 	public BoundingBoxE6 mBB;
 	
 	public KmlObject(){
@@ -120,19 +136,21 @@ public class KmlObject implements Parcelable {
 	 * Build the overlay related to this KML object. 
 	 * @param context
 	 * @param map
-	 * @param marker
+	 * @param marker to use for Points
 	 * @param kmlProvider
 	 * @return the overlay, depending on the KML object type: 
-	 * Folder=>FolderOverlay, Point=>ItemizedOverlayWithBubble, Polygon=>Polygon, LineString=>PathOverlay
+	 * 		Folder=>FolderOverlay, Point=>ItemizedOverlayWithBubble, Polygon=>Polygon, LineString=>PathOverlay
 	 */
 	public Overlay buildOverlays(Context context, MapView map, Drawable marker, KmlProvider kmlProvider, 
 			boolean supportVisibility){
 		switch (mObjectType){
 		case FOLDER:{
 			FolderOverlay folderOverlay = new FolderOverlay(context);
-			for (KmlObject k:mItems){
-				Overlay overlay = k.buildOverlays(context, map, marker, kmlProvider, supportVisibility);
-				folderOverlay.add(overlay, null);
+			if (mItems != null){
+				for (KmlObject k:mItems){
+					Overlay overlay = k.buildOverlays(context, map, marker, kmlProvider, supportVisibility);
+					folderOverlay.add(overlay, null);
+				}
 			}
 			if (supportVisibility && !mVisibility)
 				folderOverlay.setEnabled(false);
