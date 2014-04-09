@@ -267,9 +267,9 @@ public class KmlProvider {
 				mCurrentStyle = new Style();
 				mCurrentStyleId = attributes.getValue("id");
 			} else if (localName.equals("LineStyle")) {
-				mColorStyle = mCurrentStyle.outlineColorStyle;
+//				mColorStyle = mCurrentStyle.outlineColorStyle;
 			} else if (localName.equals("PolyStyle")) {
-				mColorStyle = mCurrentStyle.fillColorStyle;
+//				mColorStyle = mCurrentStyle.fillColorStyle;
 			}
 			mString = new String();
 		}
@@ -315,14 +315,14 @@ public class KmlProvider {
 			} else if (localName.equals("styleUrl")){
 				mKmlCurrentObject.mStyle = mString.substring(1); //remove the #
 			} else if (localName.equals("color")){
-				if (mCurrentStyle != null)
-					mColorStyle.color = mColorStyle.parseColor(mString);
+//				if (mCurrentStyle != null)
+//					mColorStyle.color = mColorStyle.parseColor(mString);
 			} else if (localName.equals("colorMode")){
-				if (mCurrentStyle != null)
-					mColorStyle.colorMode = (mString.equals("random")?ColorStyle.MODE_RANDOM:ColorStyle.MODE_NORMAL);
+//				if (mCurrentStyle != null)
+//					mColorStyle.colorMode = (mString.equals("random")?ColorStyle.MODE_RANDOM:ColorStyle.MODE_NORMAL);
 			} else if (localName.equals("width")){
-				if (mCurrentStyle != null)
-					mCurrentStyle.outlineWidth = Float.parseFloat(mString);
+//				if (mCurrentStyle != null)s
+//					mCurrentStyle.outlineWidth = Float.parseFloat(mString);
 			} else if (localName.equals("Style")){
 				mStyles.put(mCurrentStyleId, mCurrentStyle);
 				mCurrentStyle = null;

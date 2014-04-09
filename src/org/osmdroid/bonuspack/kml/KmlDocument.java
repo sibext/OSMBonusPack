@@ -12,10 +12,13 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.osmdroid.bonuspack.utils.BonusPackHelper;
@@ -24,6 +27,7 @@ import org.osmdroid.util.GeoPoint;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
 import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -615,7 +619,7 @@ public class KmlDocument implements Parcelable {
 	}
 
 	public void writeKMLStyles(Writer writer){
-		for (HashMap.Entry<String, Style> entry : mStyles.entrySet()) {
+		for (Map.Entry<String, Style> entry : mStyles.entrySet()) {
 			String styleId = entry.getKey();
 			Style style = entry.getValue();
 			style.writeAsKML(writer, styleId);

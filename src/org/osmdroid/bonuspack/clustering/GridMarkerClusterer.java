@@ -78,7 +78,7 @@ public class GridMarkerClusterer extends MarkerClusterer {
 		ArrayList<StaticCluster> clusters = new ArrayList<StaticCluster>();
 		LongSparseArray<StaticCluster> sparseArray = new LongSparseArray<StaticCluster>();
 		for (Marker item:mItems){
-			//TODO - add 180° to prevent negative values
+			//TODO - add 180Â° to prevent negative values
 			long gridX = (long)(item.getPosition().getLongitude() / gridSizeX);
 			long gridY = (long)(item.getPosition().getLatitude() / gridSizeY);
 			long coord = numCellsW * gridX + gridY;

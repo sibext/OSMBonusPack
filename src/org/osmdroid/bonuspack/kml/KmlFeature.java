@@ -3,6 +3,8 @@ package org.osmdroid.bonuspack.kml;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.Map;
+
 import org.json.JSONObject;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.bonuspack.overlays.Polygon;
@@ -11,6 +13,7 @@ import org.osmdroid.bonuspack.utils.BonusPackHelper;
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -152,7 +155,7 @@ public abstract class KmlFeature implements Parcelable, Cloneable {
 			return true;
 		try {
 			writer.write("<ExtendedData>\n");
-			for (HashMap.Entry<String, String> entry : mExtendedData.entrySet()) {
+			for (Map.Entry<String, String> entry : mExtendedData.entrySet()) {
 				String name = entry.getKey();
 				String value = entry.getValue();
 				writer.write("<Data name=\""+name+"\"><value>"+value+"</value></Data>\n");

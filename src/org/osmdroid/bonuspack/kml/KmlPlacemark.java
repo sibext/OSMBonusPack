@@ -4,6 +4,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.osmdroid.bonuspack.overlays.Marker;
@@ -12,6 +14,7 @@ import org.osmdroid.bonuspack.overlays.Polyline;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -124,7 +127,7 @@ public class KmlPlacemark extends KmlFeature implements Cloneable, Parcelable {
 				json.put("name", mName);
 			}
 			if (mExtendedData != null){
-				for (HashMap.Entry<String, String> entry : mExtendedData.entrySet()) {
+				for (Map.Entry<String, String> entry : mExtendedData.entrySet()) {
 					String name = entry.getKey();
 					String value = entry.getValue();
 					json.put(name, value);

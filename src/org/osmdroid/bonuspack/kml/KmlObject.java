@@ -1,6 +1,8 @@
 package org.osmdroid.bonuspack.kml;
 
 import java.util.ArrayList;
+
+import org.osmdroid.bonuspack.overlays.DefaultInfoWindow;
 import org.osmdroid.bonuspack.overlays.ExtendedOverlayItem;
 import org.osmdroid.bonuspack.overlays.FolderOverlay;
 import org.osmdroid.bonuspack.overlays.ItemizedOverlayWithBubble;
@@ -11,6 +13,7 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.PathOverlay;
+
 import android.content.Context;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
@@ -149,7 +152,7 @@ public class KmlObject implements Parcelable {
 			if (mItems != null){
 				for (KmlObject k:mItems){
 					Overlay overlay = k.buildOverlays(context, map, marker, kmlProvider, supportVisibility);
-					folderOverlay.add(overlay, null);
+					folderOverlay.add(overlay);
 				}
 			}
 			if (supportVisibility && !mVisibility)
@@ -157,7 +160,7 @@ public class KmlObject implements Parcelable {
 			return folderOverlay;
 		}
 		case POINT:{
-			ExtendedOverlayItem item = new ExtendedOverlayItem(mName, mDescription, mCoordinates.get(0), context);
+			ExtendedOverlayItem item = new ExtendedOverlayItem(mName, mDescription, mCoordinates.get(0));
 			item.setMarkerHotspot(OverlayItem.HotspotPlace.BOTTOM_CENTER);
 			item.setMarker(marker);
 			ArrayList<ExtendedOverlayItem> kmlPointsItems = new ArrayList<ExtendedOverlayItem>();
@@ -195,7 +198,7 @@ public class KmlObject implements Parcelable {
 			Style style = kmlProvider.getStyle(mStyle);
 			if (style != null){
 				outlinePaint = style.getOutlinePaint();
-				fillColor = style.fillColorStyle.getColor();
+//				fillColor = style.fillColorStyle.getColor();
 			}
 			if (outlinePaint == null){ 
 				//set default:
@@ -213,7 +216,7 @@ public class KmlObject implements Parcelable {
 			if (!mName.equals("") || !mDescription.equals("")){
 				String packageName = context.getPackageName();
 				int layoutResId = context.getResources().getIdentifier("layout/bonuspack_bubble", null, packageName);
-				polygonOverlay.setInfoWindow(layoutResId, map);
+				polygonOverlay.setInfoWindow(new DefaultInfoWindow(layoutResId, map));
 			}
 			if (supportVisibility && !mVisibility)
 				polygonOverlay.setEnabled(false);
