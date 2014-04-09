@@ -1,5 +1,8 @@
 package org.osmdroid.bonuspack.kml;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -8,17 +11,24 @@ import android.os.Parcelable;
  * Handling of KML ColorStyle
  * @author M.Kergall
  */
-class ColorStyle implements Parcelable {
+public class ColorStyle implements Parcelable {
 	/** color modes */
 	static final int MODE_NORMAL=0, MODE_RANDOM=1;
 	
-	public int color = 0;
-	public int colorMode = MODE_NORMAL;
+	public int mColor;
+	public int mColorMode;
 	
-	ColorStyle(){
+	public ColorStyle(){
+		this(0);
 	}
 	
-	protected int parseColor(String sColor){
+	ColorStyle(int color){
+		this.mColor = color;
+		mColorMode = MODE_NORMAL;
+	}
+	
+	/** return color in Android int color format */
+	public static int parseKMLColor(String sColor){
 		sColor = sColor.trim();
 		while (sColor.length()<8)
 			sColor = "0"+sColor;
@@ -27,7 +37,7 @@ class ColorStyle implements Parcelable {
 		String gg = sColor.substring(4, 6);
 		String rr = sColor.substring(6, 8);
 		sColor = "#"+aa+rr+gg+bb;
-		int iColor = 0xFF000000;
+		int iColor = 0xFF000000; //default
 		try {
 			iColor = Color.parseColor(sColor);
 		} catch (IllegalArgumentException e){
@@ -36,39 +46,48 @@ class ColorStyle implements Parcelable {
 		return iColor;
 	}
 
-	/*
-	public ColorStyle(Element eColorStyle){
-		color = 0;
-		colorMode = MODE_NORMAL;
-		List<Element> colors = KmlProvider.getChildrenByTagName(eColorStyle, "color");
-		if (colors.size()>0){
-			String sColor = KmlProvider.getChildText(colors.get(0));
-			color = parseColor(sColor);
-		}
-		List<Element> colorModes = KmlProvider.getChildrenByTagName(eColorStyle, "colorMode");
-		if (colorModes.size()>0){
-			String sColorMode = KmlProvider.getChildText(colorModes.get(0));
-			if ("random".equals(sColorMode)){
-				colorMode = MODE_RANDOM;
-			}
-		}
+	/** return color in KML color format, which is: AABBGGRR, in hexa values*/
+	public static String colorAsKMLString(int aColor){
+		return String.format("%02X%02X%02X%02X", Color.alpha(aColor), Color.blue(aColor), Color.green(aColor), Color.red(aColor));
 	}
-	*/
 	
-	public int getColor(){
-		if (colorMode == MODE_NORMAL)
-			return color;
+	/** return color in usual Android color format, which is: #AARRGGBB, in hexa values*/
+	public static String colorAsAndroidString(int aColor){
+		return String.format("#%08X", 0xFFFFFFFF & aColor);
+	}
+	
+	public String colorAsAndroidString(){
+		return colorAsAndroidString(mColor);
+	}
+	
+	/**
+	 * @return the color to use on an actual object. If color mode is random, generate appropriate random color. 
+	 */
+	public int getFinalColor(){
+		if (mColorMode == MODE_NORMAL)
+			return mColor;
 		else  { //mode random:
 			//generate a random color within the range of each color component:
-			int alpha = Color.alpha(color);
+			int alpha = Color.alpha(mColor);
 			double randomRange = Math.random();
-			int red = Color.red(color); red = (int)(red * randomRange);
-			int green = Color.green(color); green = (int)(green * randomRange);
-			int blue = Color.blue(color); blue = (int)(blue * randomRange);
+			int red = Color.red(mColor); red = (int)(red * randomRange);
+			int green = Color.green(mColor); green = (int)(green * randomRange);
+			int blue = Color.blue(mColor); blue = (int)(blue * randomRange);
 			return Color.argb(alpha, red, green, blue);
 		}
 	}
 
+	public void writeAsKML(Writer writer){
+		try {
+			writer.write("<color>"+colorAsKMLString(mColor)+"</color>\n");
+			if (mColorMode == MODE_RANDOM){
+				writer.write("<colorMode>random</colorMode>\n");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	//Parcelable implementation ------------
 
 	@Override public int describeContents() {
@@ -76,8 +95,8 @@ class ColorStyle implements Parcelable {
 	}
 
 	@Override public void writeToParcel(Parcel out, int flags) {
-		out.writeInt(color);
-		out.writeInt(colorMode);
+		out.writeInt(mColor);
+		out.writeInt(mColorMode);
 	}
 	
 	public static final Parcelable.Creator<ColorStyle> CREATOR = new Parcelable.Creator<ColorStyle>() {
@@ -90,8 +109,8 @@ class ColorStyle implements Parcelable {
 	};
 	
 	public ColorStyle(Parcel in){
-		color = in.readInt();
-		colorMode = in.readInt();
+		mColor = in.readInt();
+		mColorMode = in.readInt();
 	}
 }
 
